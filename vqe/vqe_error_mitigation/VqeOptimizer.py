@@ -4,6 +4,7 @@ from vqe_utils import sample_observable_noisy_circuit
 from vqe_utils import error_mitigation_sample
 from numpy import pi, zeros
 
+
 class VqeOptimizer(object):
     """docstring for VqeOptimizer
     Args:
@@ -116,10 +117,10 @@ class VqeOptimizer(object):
         self.parameter_history.append(self.initial_param)
         if self.optimization_mode == "BFGS":
             opt = minimize(target_func, self.initial_param,
-                     method="BFGS", jac=grad, callback=self._callback)
+                           method="BFGS", jac=grad, callback=self._callback)
         if self.optimization_mode == "CG":
             opt = minimize(target_func, self.initial_param,
-                     method="CG", jac=grad, callback=self._callback)
+                           method="CG", jac=grad, callback=self._callback)
         return opt.x
 
     def _target_func_sample(self, param):
@@ -133,10 +134,10 @@ class VqeOptimizer(object):
             :class:`float`
         """
         ret = self.sample_mitigated_output(param,
-                                 self.n_circuit_sample,
-                                 self.n_sample_per_circuit,
-                                 mode=self.error_mitigation_mode,
-                                 )
+                                           self.n_circuit_sample,
+                                           self.n_sample_per_circuit,
+                                           mode=self.error_mitigation_mode,
+                                           )
         self._present_target_func = ret
         self._n_present_sample += self.n_circuit_sample * \
             self.n_sample_per_circuit * \
@@ -148,19 +149,19 @@ class VqeOptimizer(object):
         for i in range(len(param)):
             param[i] += pi/4
             plus = self.sample_mitigated_output(param,
-                                      self.n_circuit_sample_grad,
-                                      self.n_sample_per_circuit_grad,
-                                      mode=self.error_mitigation_mode
-                                      )
+                                                self.n_circuit_sample_grad,
+                                                self.n_sample_per_circuit_grad,
+                                                mode=self.error_mitigation_mode
+                                                )
             self._n_present_sample += self.n_circuit_sample_grad * \
                 self.n_sample_per_circuit_grad * \
                 len(self.parametric_circuit_list)
             param[i] -= pi/2
             minus = self.sample_mitigated_output(param,
-                                       self.n_circuit_sample_grad,
-                                       self.n_sample_per_circuit_grad,
-                                       mode=self.error_mitigation_mode
-                                       )
+                                                 self.n_circuit_sample_grad,
+                                                 self.n_sample_per_circuit_grad,
+                                                 mode=self.error_mitigation_mode
+                                                 )
             self._n_present_sample += self.n_circuit_sample_grad * \
                 self.n_sample_per_circuit_grad * \
                 len(self.parametric_circuit_list)
@@ -312,7 +313,7 @@ def test_VqeOptimizer():
     n_qubit = 2
     p_list = [0.05, 0.1, 0.15]
     parametric_circuit_list = \
-        [ParametricQuantumCircuit(n_qubit) \
+        [ParametricQuantumCircuit(n_qubit)
          for i in range(len(p_list))]
     initial_state = QuantumState(n_qubit)
 
@@ -346,7 +347,8 @@ def test_VqeOptimizer():
                        )
 
     noisy = opt.sample_output(initial_param)
-    mitigated, exp_array, _ = opt.sample_mitigated_output(initial_param, return_full = True)
+    mitigated, exp_array, _ = opt.sample_mitigated_output(
+        initial_param, return_full=True)
     exact = opt.exact_output(initial_param)
 
     print(noisy, exact)
@@ -356,12 +358,15 @@ def test_VqeOptimizer():
     print(opt_param)
     theta_list = np.linspace(0, np.pi, 100)
     output_list = [opt.exact_output([theta]) for theta in theta_list]
-    plt.plot(theta_list, output_list, color="black", linestyle="dashed", label="exact")
-    plt.scatter(opt.parameter_history, opt.exp_history, c = "blue", label="optimization history")
+    plt.plot(theta_list, output_list, color="black",
+             linestyle="dashed", label="exact")
+    plt.scatter(opt.parameter_history, opt.exp_history,
+                c="blue", label="optimization history")
     plt.xlabel("theta")
     plt.ylabel("output")
     plt.legend()
     plt.show()
+
 
 if __name__ == '__main__':
     test_VqeOptimizer()

@@ -188,4 +188,3 @@ def error_mitigation_sample(circuit_list, error_list, initial_state, obs,
         return fit_coefs[1], exp_array, fit_coefs
     else:
         return fit_coefs[1]
-
